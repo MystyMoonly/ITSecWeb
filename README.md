@@ -13,7 +13,7 @@ It is dedicated to literacy and awareness of information security issues for use
 A test has been compiled for each of the 8 topics to check yours awareness. 
 And also a little crooked, but still checking passwords for compliance with the rules of a secure password(Beta).
 
-You can see the resourse demonstration here: 
+You can see the resourse demonstration here: https://itsec-c6fca.web.app/
 
 ! You may need to disable Adblock if the site is displayed incorrectly (don't worry, there are no ads on the site, it's just a bare template for demonstration) !
 
