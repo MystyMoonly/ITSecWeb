@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Quiz</title>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+    body, html {
+      height: 100%;
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: rgb(222, 179, 226);
+      background: linear-gradient(0deg, rgba(222, 179, 226, 1) 0%, rgb(208, 142, 206) 50%, rgb(192, 107, 187) 100%);
+    }
+
+    .quiz-container {
+      background-color: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
+      overflow: hidden;
+      width: 700px;
+      max-width: 100%;
+    }
+
+    .question-header {
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .question-counter, .score-counter {
+      color: #888888;
+      font-size: 16px;
+    }
+
+    .question {
+      padding: 20px;
+      border-top: 1px solid #eeeeee;
+    }
+
+    .options {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .option {
+      background-color: #f4f4f4;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .option:hover {
+      background-color: #e9e9e9;
+    }
+
+    .correct {
+      background-color: #a1e9a1;
+    }
+
+    .incorrect {
+      background-color: #e9a1a1;
+    }
+
+    .btn-next {
+      background-color: #8bc34a;
+      color: #ffffff;
+      border: none;
+      border-radius: 5px;
+      padding: 10px 20px;
+      font-size: 18px;
+      cursor: pointer;
+      margin: 20px;
+      transition: background-color 0.3s;
+    }
+
+    .btn-next:hover {
+      background-color: #7cb342;
+    }
+
+    .btn-next:disabled {
+      background-color: #a9a9a9;
+      cursor: not-allowed;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .selected {
+      background-color: #3fde6a;
+    }
+
+    .results-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .return-link {
+      background-color: #8bc34a;
+      color: #ffffff;
+      border: none;
+      border-radius: 5px;
+      padding: 10px 20px;
+      font-size: 18px;
+      cursor: pointer;
+      margin: 20px;
+      transition: background-color 0.3s;
+      text-align: right;
+      float: right;
+    }
+
+    .return-link:hover {
+      background-color: #7cb342;
+    }
+
+    .course-return-link {
+      background-color: #8bc34a;
+      color: #ffffff;
+      border: none;
+      border-radius: 5px;
+      padding: 10px 20px;
+      font-size: 18px;
+      cursor: pointer;
+      margin: 20px;
+      transition: background-color 0.3s;
+      text-align: right;
+      float: right;
+
+    }
+
+    .course-return-link:hover {
+      background-color: #7cb342;
+    }
+
+    #feedback {
+      margin: 10px 0;
+      padding: 10px;
+      text-align: center;
+      border-radius: 5px;
+      color: #ffffff;
+    }
+
+    .correct-feedback {
+      background-color: #a1e9a1;
+    }
+
+    .incorrect-feedback {
+      background-color: #e9a1a1;
+    }
+
+  </style>
+</head>
+<body>
+<div class="quiz-container" id="quiz-container">
+  <div id="quiz">
+    <div class="question-header">
+      <div class="question-counter">🦠 Опасные файлы и вирусыㅤㅤㅤㅤㅤㅤㅤㅤ Вопрос <span id="question-counter">1</span> / 6</div>
+      <div class="score-counter">Баллы: <span id="score-counter">0</span> / 6</div>
+
+    </div>
+    <div class="question" id="question">Question text</div>
+    <div id="feedback" class="hidden"></div> <!-- новый элемент -->
+    <div class="options" id="options">
+
+
+      <div class="option" id="option1">Option 1</div>
+      <div class="option" id="option2">Option 2</div>
+      <div class="option" id="option3">Option 3</div>
+      <div class="option" id="option4">Option 4</div>
+    </div>
+    <button class="btn-next" id="next-btn" disabled>Проверить</button>
+    <button class="return-link" onclick="location.href='../job_details_virus.html'">Вернуться к курсу</button>
+
+  </div>
+  <div class="quiz-container hidden" id="results">
+    <h2 class="results-container">Вы успешно прошли курс!</h2>
+    <p class="results-container">Ваш результат: <span id="results-score">0</span> / 6</p>
+    <button class="btn-next" id="restart-btn">Пройти ещё раз</button>
+    <button class="course-return-link" onclick="location.href='../job_details_virus.html'">Вернуться к курсу</button>
+
+
+  </div>
+</div>
+
+
+
+<script>
+  const quizContainer = document.getElementById('quiz-container');
+  const quizElement = document.getElementById('quiz');
+  const questionElement = document.getElementById('question');
+  const option1Element = document.getElementById('option1');
+  const option2Element = document.getElementById('option2');
+  const option3Element = document.getElementById('option3');
+  const option4Element = document.getElementById('option4');
+
+  const nextButton = document.getElementById('next-btn');
+  const questionCounterElement = document.getElementById('question-counter');
+  const scoreCounterElement = document.getElementById('score-counter');
+
+  const resultsElement = document.getElementById('results');
+  const resultsScoreElement = document.getElementById('results-score');
+  const restartButton = document.getElementById('restart-btn');
+
+  const questions = [
+    {
+      question: 'Какие существуют пути заражения персональных компьютеров?',
+      options: [
+        'Скачивание из Интернета и установка пиратского/нерегламентированного ПО',
+        'Переход по ссылкам на официальных сайтах',
+        'Переход по ссылкам из сообщений, полученных от друзей в социальных сетях, на форумах и т.д.',
+        'Использование лицензионного антивирусного ПО'
+      ],
+      correctOption: ['option1', 'option3']
+    },
+    {
+      question: 'Укажите дополнительные пути заражения персональных компьютеров',
+      options: [
+        'Переход по ссылкам в письмах от неизвестных адресатов и на незнакомых подозрительных сайтах',
+        'Работа в оффлайн режиме',
+        'Установка обновлений через официальные каналы',
+        'Открытие файлов-вложений в письмах электронной почты от неизвестных адресатов'
+      ],
+      correctOption: ['option1', 'option4']
+    },
+    {
+      question: 'Какие существуют пути заражения мобильных устройств?',
+      options: [
+        'Использование открытых сетей связи в публичных местах',
+        'Переход по ссылкам из сообщений, полученных от друзей в системах мгновенного обмена сообщениями',
+        'Скачивание приложений из официального магазина приложений',
+        'Включение автоматических обновлений операционной системы'
+      ],
+      correctOption: ['option1', 'option2']
+    },
+    {
+      question: 'Укажите дополнительные пути заражения мобильных устройств',
+      options: [
+        'Установка антивирусного приложения',
+        'Использование мобильного устройства исключительно для звонков и отправки СМС',
+        'Отсутствие антивирусного ПО на мобильном устройстве',
+        'Скачивание и установка мобильных приложений из неавторизированных источников'
+      ],
+      correctOption: ['option3', 'option4']
+    },
+    {
+      question: 'Укажите по каким причинам можно понять, что ваш персональный компьютер заражен',
+      options: [
+        'Вам приходят сообщения без адреса и заголовка',
+        'На ПК невозможно запустить антивирус',
+        'Ваши друзья и знакомые получают от Вас сообщения, которых вы не писали',
+        'Ваш ПК работает быстрее, чем обычно'
+      ],
+      correctOption: ['option1', 'option2','option3']
+    },
+    {
+      question: 'По каким еще причинам можно заподозрить, что ПК заражен?',
+      options: [
+        'На экране появляются подозрительные сообщения, рекламные окна',
+        'Произвольно запускаются программы, автоматически удаляются файлы, папки, искажается их содержимое',
+        'Частые зависания и сбои в работе, не загружается операционная система'
+      ],
+      correctOption: ['option1', 'option2', 'option3']
+    }
+
+    // more questions here
+  ];
+
+  let currentQuestionIndex = 0;
+  let score = 0;
+  let selectedOptions = [];
+
+  function showQuestion(questionIndex) {
+    const question = questions[questionIndex];
+    questionElement.innerText = question.question;
+
+    const options = [option1Element, option2Element, option3Element, option4Element];
+    options.forEach(option => option.classList.remove('hidden'));
+
+    for(let i = 0; i < 4; i++) {
+      if(i < question.options.length) {
+        options[i].innerText = question.options[i];
+      } else {
+        options[i].classList.add('hidden');
+      }
+    }
+
+    questionCounterElement.innerText = questionIndex + 1;
+    nextButton.disabled = true;
+  }
+
+  function selectOption(option) {
+    if (selectedOptions.includes(option.id)) {
+      option.classList.remove('selected');
+      const index = selectedOptions.indexOf(option.id);
+      if (index > -1) {
+        selectedOptions.splice(index, 1);
+      }
+    } else {
+      option.classList.add('selected');
+      selectedOptions.push(option.id);
+    }
+    nextButton.disabled = false;
+  }
+
+  option1Element.addEventListener('click', function() {
+    selectOption(this);
+  });
+  option2Element.addEventListener('click', function() {
+    selectOption(this);
+  });
+  option3Element.addEventListener('click', function() {
+    selectOption(this);
+  });
+  option4Element.addEventListener('click', function() {
+    selectOption(this);
+  });
+
+  nextButton.addEventListener('click', function() {
+    const question = questions[currentQuestionIndex];
+    let isCorrect = true;
+    const feedbackElement = document.getElementById('feedback');
+
+    question.correctOption.forEach((correctOption) => {
+      if (!selectedOptions.includes(correctOption)) {
+        isCorrect = false;
+      }
+    });
+
+    if (isCorrect && question.correctOption.length === selectedOptions.length) {
+
+      feedbackElement.innerText = '✔️ Совершенно верно!';
+      feedbackElement.className = 'correct-feedback'; // добавляем класс для стилизации
+
+      selectedOptions.forEach((optionId) => {
+        document.getElementById(optionId).classList.remove('selected');
+        document.getElementById(optionId).classList.add('correct');
+      });
+      score++;
+      scoreCounterElement.innerText = score;
+      setTimeout(() => {
+        currentQuestionIndex++;
+        if (currentQuestionIndex < questions.length) {
+          feedbackElement.innerText = '';
+          feedbackElement.className = '';
+          showQuestion(currentQuestionIndex);
+          this.disabled = true;
+          option1Element.classList.remove('correct', 'incorrect', 'selected');
+          option2Element.classList.remove('correct', 'incorrect', 'selected');
+          option3Element.classList.remove('correct', 'incorrect', 'selected');
+          option4Element.classList.remove('correct', 'incorrect', 'selected');
+          selectedOptions = [];
+        } else {
+
+
+
+
+          quizElement.classList.add('hidden');
+          resultsElement.classList.remove('hidden');
+          resultsScoreElement.innerText = score;
+        }
+      }, 2000);
+    } else {
+      selectedOptions.forEach((optionId) => {
+        if (!question.correctOption.includes(optionId)) {
+          document.getElementById(optionId).classList.remove('selected');
+          document.getElementById(optionId).classList.add('incorrect');
+        }
+      });
+      setTimeout(() => {
+        option1Element.classList.remove('correct', 'incorrect', 'selected');
+        option2Element.classList.remove('correct', 'incorrect', 'selected');
+        option3Element.classList.remove('correct', 'incorrect', 'selected');
+        option4Element.classList.remove('correct', 'incorrect', 'selected');
+        selectedOptions = [];
+
+        feedbackElement.innerText = '❌ Пока неправильно, попробуй еще раз!';
+        feedbackElement.className = 'incorrect-feedback'; // добавляем класс для стилизации
+      }, 2000);
+    }
+  });
+
+  restartButton.addEventListener('click', function() {
+    currentQuestionIndex = 0;
+    score = 0;
+    selectedOptions = [];
+    quizElement.classList.remove('hidden');
+    resultsElement.classList.add('hidden');
+    scoreCounterElement.innerText = score;
+    questionCounterElement.innerText = 1;
+    showQuestion(currentQuestionIndex);
+  });
+
+  // Initial question
+  showQuestion(currentQuestionIndex);
+</script>
+</body>
+</html>
