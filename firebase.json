@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "public": "jobboard2",
+    "public": ".",
     "ignore": [
       "firebase.json",
       "**/.*",
